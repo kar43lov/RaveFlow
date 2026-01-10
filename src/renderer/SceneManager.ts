@@ -9,6 +9,16 @@ import { NeonMazeChase } from '../scenes/NeonMazeChase'
 import { PixelSymbolTunnel } from '../scenes/PixelSymbolTunnel'
 import { CrowdPulse } from '../scenes/CrowdPulse'
 import { LaserStorm } from '../scenes/LaserStorm'
+// New scenes
+import { BouncingBall } from '../scenes/BouncingBall'
+import { RunningMan } from '../scenes/RunningMan'
+import { DJBoothStrobe } from '../scenes/DJBoothStrobe'
+import { PongBattle } from '../scenes/PongBattle'
+import { WaveformOcean } from '../scenes/WaveformOcean'
+import { ParticleExplosion } from '../scenes/ParticleExplosion'
+import { GeometricMorph } from '../scenes/GeometricMorph'
+import { Kaleidoscope } from '../scenes/Kaleidoscope'
+import { CityFlythrough } from '../scenes/CityFlythrough'
 
 export class SceneManager {
   private renderer: Renderer
@@ -34,7 +44,17 @@ export class SceneManager {
       new NeonMazeChase(),
       new PixelSymbolTunnel(),
       new CrowdPulse(),
-      new LaserStorm()
+      new LaserStorm(),
+      // New scenes
+      new BouncingBall(),
+      new RunningMan(),
+      new DJBoothStrobe(),
+      new PongBattle(),
+      new WaveformOcean(),
+      new ParticleExplosion(),
+      new GeometricMorph(),
+      new Kaleidoscope(),
+      new CityFlythrough()
     ]
 
     // Initialize all scenes
