@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(taches-cc-resources:run-prompt)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Skill(taches-cc-resources:create-slash-commands)",
+      "Bash(npm install)",
+      "Bash(npm run build:*)"
+    ]
+  }
+}
