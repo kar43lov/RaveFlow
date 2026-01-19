@@ -1,8 +1,9 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from './components/Canvas'
 import { SettingsOverlay } from './components/SettingsOverlay'
 import { Equalizer } from './components/Equalizer'
 import { FullscreenHint } from './components/FullscreenHint'
+import { TouchControls } from './components/TouchControls'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useStore } from './store/useStore'
 import { SceneManager } from './renderer/SceneManager'
@@ -26,9 +27,17 @@ export function App() {
     setSceneNames(sceneManager.getSceneNames())
   }, [])
 
-  const handleAudioAnalyzerReady = useCallback((analyzer: AudioAnalyzer) => {
+  const handleAudioAnalyzerReady = useCallback(async (analyzer: AudioAnalyzer) => {
     audioAnalyzerRef.current = analyzer
-  }, [])
+
+    // Auto-enable microphone on page load
+    const status = await analyzer.startMic()
+    setMicStatus(status)
+
+    if (status === 'on') {
+      setMicMode(true)
+    }
+  }, [setMicMode, setMicStatus])
 
   const handleTapTempoReady = useCallback((tapTempo: TapTempo) => {
     tapTempoRef.current = tapTempo
@@ -73,6 +82,8 @@ export function App() {
       <Equalizer audioFeatures={audioFeatures} />
 
       <FullscreenHint />
+
+      <TouchControls />
 
       <SettingsOverlay
         sceneNames={sceneNames}

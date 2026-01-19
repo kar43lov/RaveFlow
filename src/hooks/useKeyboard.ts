@@ -48,11 +48,13 @@ export function useKeyboard({ sceneCount }: UseKeyboardOptions) {
 
       // Next scene
       case 'n':
+      case 'arrowright':
         nextScene()
         break
 
       // Previous scene
       case 'p':
+      case 'arrowleft':
         prevScene()
         break
 
