@@ -6,7 +6,18 @@
       "mcp__context7__get-library-docs",
       "Skill(taches-cc-resources:create-slash-commands)",
       "Bash(npm install)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "mcp__plugin_serena_serena__list_dir",
+      "mcp__plugin_serena_serena__read_file",
+      "mcp__plugin_serena_serena__write_memory",
+      "mcp__plugin_serena_serena__think_about_collected_information",
+      "mcp__plugin_serena_serena__think_about_task_adherence",
+      "mcp__plugin_serena_serena__replace_content",
+      "mcp__plugin_serena_serena__think_about_whether_you_are_done",
+      "mcp__plugin_serena_serena__activate_project",
+      "mcp__plugin_serena_serena__create_text_file",
+      "mcp__plugin_serena_serena__get_symbols_overview",
+      "Skill(sc:pm)"
     ]
   }
 }
