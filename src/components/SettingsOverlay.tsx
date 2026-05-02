@@ -38,6 +38,8 @@ export function SettingsOverlay({
     setAutoCycleMode,
     autoCycleInterval,
     setAutoCycleInterval,
+    autoCycleSensitivity,
+    setAutoCycleSensitivity,
     micMode,
     setMicMode,
     micStatus,
@@ -185,19 +187,19 @@ export function SettingsOverlay({
               <div className="control-row">
                 <label>Mode</label>
                 <div className="quality-selector">
-                  {(['auto', 'timed'] as AutoCycleMode[]).map((m) => (
+                  {(['auto', 'timed', 'hybrid'] as AutoCycleMode[]).map((m) => (
                     <button
                       key={m}
                       className={`quality-btn ${autoCycleMode === m ? 'active' : ''}`}
                       onClick={() => setAutoCycleMode(m)}
                     >
-                      {m === 'auto' ? 'By music' : 'Timed'}
+                      {m === 'auto' ? 'By music' : m === 'timed' ? 'Timed' : 'Hybrid'}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {autoCycleMode === 'timed' && (
+              {(autoCycleMode === 'timed' || autoCycleMode === 'hybrid') && (
                 <div className="control-row">
                   <label>Every</label>
                   <input
@@ -212,15 +214,33 @@ export function SettingsOverlay({
                 </div>
               )}
 
+              {(autoCycleMode === 'auto' || autoCycleMode === 'hybrid') && (
+                <div className="control-row">
+                  <label>Sensitivity</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={autoCycleSensitivity}
+                    onChange={(e) => setAutoCycleSensitivity(parseFloat(e.target.value))}
+                  />
+                  <span className="control-value">{autoCycleSensitivity.toFixed(2)}</span>
+                </div>
+              )}
+
               <p style={{
                 fontSize: '11px',
                 color: 'rgba(255,255,255,0.4)',
                 marginTop: '4px',
                 lineHeight: 1.4
               }}>
-                {autoCycleMode === 'auto'
-                  ? 'Switches on big drops or transitions in the music (mic mode required for best results).'
-                  : `Switches every ${formatInterval(autoCycleInterval)}. Manual Next/Prev resets the timer.`}
+                {autoCycleMode === 'auto' &&
+                  'Switches on drops or silence in the music. Higher sensitivity = triggers more often. Mic mode required.'}
+                {autoCycleMode === 'timed' &&
+                  `Switches every ${formatInterval(autoCycleInterval)}. Manual Next/Prev resets the timer.`}
+                {autoCycleMode === 'hybrid' &&
+                  `Switches every ${formatInterval(autoCycleInterval)} and also jumps early on a music drop. Both reset the timer.`}
               </p>
             </>
           )}

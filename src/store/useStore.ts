@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { MicStatus } from '../scenes/types'
 
 export type Quality = 'low' | 'medium' | 'high'
-export type AutoCycleMode = 'auto' | 'timed'
+export type AutoCycleMode = 'auto' | 'timed' | 'hybrid'
 
 interface AppState {
   // Scene
@@ -27,6 +27,8 @@ interface AppState {
   setAutoCycleMode: (m: AutoCycleMode) => void
   autoCycleInterval: number  // seconds
   setAutoCycleInterval: (s: number) => void
+  autoCycleSensitivity: number  // 0..1, higher = triggers more often
+  setAutoCycleSensitivity: (v: number) => void
 
   // Playback
   isPaused: boolean
@@ -144,6 +146,8 @@ export const useStore = create<AppState>((set) => ({
   setAutoCycleMode: (m) => set({ autoCycleMode: m }),
   autoCycleInterval: 60,
   setAutoCycleInterval: (s) => set({ autoCycleInterval: Math.max(30, Math.min(600, s)) }),
+  autoCycleSensitivity: 0.65,
+  setAutoCycleSensitivity: (v) => set({ autoCycleSensitivity: Math.max(0, Math.min(1, v)) }),
 
   // Playback
   isPaused: false,
