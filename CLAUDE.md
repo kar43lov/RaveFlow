@@ -42,7 +42,13 @@ Each scene implements the `Scene` interface from `types.ts`:
 - `dispose()` - Clean up GPU resources
 
 **State** (`src/store/useStore.ts`)
-Zustand store managing: current scene, playback state, mic mode, BPM, quality settings, UI visibility.
+Zustand store managing: current scene, playback state, mic mode, BPM, quality settings, UI visibility, **multi-select playlist** (`multiSelectMode` + `selectedScenes`), **auto-cycle** (`autoCycleEnabled` + `autoCycleMode` `'auto'|'timed'|'hybrid'` + `autoCycleInterval` + `autoCycleSensitivity` + `autoCycleCooldown`), and **hover preview** (`previewSceneIndex`). `nextScene`/`prevScene` route through a `stepIndex` helper that respects the active subset when multi-select is on.
+
+**Auto-cycle** (`src/hooks/useAutoCycle.ts`)
+- `'timed'` — `setInterval(autoCycleInterval)`. Manual scene change resets the timer.
+- `'auto'` — adaptive thresholds against a 6 s rolling window of `audio.energy`/`audio.bass`. A drop fires when current energy is in the upper portion of the recent range, bass is near its recent peak, **and** there's a "jump" — current vs ~0.5 s ago. Silence fires on a corresponding fall. Sensitivity (0..1) widens/narrows the bands; min-gap is a separate user slider (5..60 s).
+- `'hybrid'` — both. Timer ticks **and** music drops can fire early. Either kind of switch resets the cooldown.
+- Companion `useAutoCycleDebug` mirrors the math without firing — feeds the live debug overlay (`AutoCycleDebugOverlay`) toggled in Settings.
 
 ### Adding a New Scene
 
@@ -63,6 +69,10 @@ update(time, deltaTime, beat, audio) {
   this.material.uniforms.uEnergy.value = audio.energy
 }
 ```
+
+### Gotcha: AudioFeatures object is reused
+
+`AudioAnalyzer.getFeatures()` returns the **same** internal `smoothedFeatures` object every frame and mutates it in place (perf — no per-frame allocation). `Canvas.animate` therefore spreads it before forwarding: `onAudioFeaturesUpdate({ ...audioFeatures })`. Without the spread, `setState` sees the same reference, React skips the update, and any `useEffect` listening on `audioFeatures` (e.g. `useAutoCycle`) silently never runs. Equalizer / debug overlays still look fine because they read fields directly during render. Don't remove that spread.
 
 ### GLSL Shaders
 
