@@ -50,24 +50,24 @@ export function TouchControls() {
     }
   }, [showControls])
 
-  const handlePrev = (e: React.MouseEvent | React.TouchEvent) => {
+  const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation()
     prevScene()
     showControls()
   }
 
-  const handleNext = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleNext = (e: React.MouseEvent) => {
     e.stopPropagation()
     nextScene()
     showControls()
   }
 
-  const handleSettings = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleSettings = (e: React.MouseEvent) => {
     e.stopPropagation()
     toggleSettings()
   }
 
-  const handleFullscreen = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation()
     toggleFullscreen()
     showControls()
@@ -77,23 +77,21 @@ export function TouchControls() {
     <div className={`touch-controls ${visible ? 'visible' : ''}`}>
       {/* Scene navigation */}
       <div className="touch-controls-nav">
-        <button 
-          className="touch-btn touch-btn-nav" 
+        <button
+          className="touch-btn touch-btn-nav"
           onClick={handlePrev}
-          onTouchEnd={handlePrev}
           aria-label="Previous scene"
         >
           ◀
         </button>
-        
+
         <span className="touch-scene-indicator">
           {currentSceneIndex + 1} / {sceneCount}
         </span>
-        
-        <button 
-          className="touch-btn touch-btn-nav" 
+
+        <button
+          className="touch-btn touch-btn-nav"
           onClick={handleNext}
-          onTouchEnd={handleNext}
           aria-label="Next scene"
         >
           ▶
@@ -101,20 +99,18 @@ export function TouchControls() {
       </div>
 
       {/* Fullscreen button */}
-      <button 
-        className="touch-btn touch-btn-settings" 
+      <button
+        className="touch-btn touch-btn-settings"
         onClick={handleFullscreen}
-        onTouchEnd={handleFullscreen}
         aria-label="Toggle fullscreen"
       >
         {isFullscreen ? '⊠' : '⛶'}
       </button>
 
       {/* Settings button */}
-      <button 
-        className="touch-btn touch-btn-settings" 
+      <button
+        className="touch-btn touch-btn-settings"
         onClick={handleSettings}
-        onTouchEnd={handleSettings}
         aria-label="Open settings"
       >
         ⚙
