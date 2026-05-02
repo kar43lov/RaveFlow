@@ -31,6 +31,7 @@ export function Canvas({
   const {
     isPaused,
     currentSceneIndex,
+    previewSceneIndex,
     setCurrentSceneIndex,
     setSceneCount,
     micMode,
@@ -118,12 +119,12 @@ export function Canvas({
     }
   }, [sensitivity, smoothing])
 
-  // Update current scene
+  // Update current scene; preview takes priority for hover-in-settings
   useEffect(() => {
-    if (sceneManagerRef.current) {
-      sceneManagerRef.current.setCurrentSceneIndex(currentSceneIndex)
-    }
-  }, [currentSceneIndex])
+    if (!sceneManagerRef.current) return
+    const idx = previewSceneIndex !== null ? previewSceneIndex : currentSceneIndex
+    sceneManagerRef.current.setCurrentSceneIndex(idx)
+  }, [currentSceneIndex, previewSceneIndex])
 
   // Animation loop
   const animate = useCallback((time: number) => {
@@ -183,8 +184,13 @@ export function Canvas({
     audioFeatures.mid *= masterIntensity
     audioFeatures.high *= masterIntensity
 
-    // Update audio features for equalizer
-    onAudioFeaturesUpdate(audioFeatures)
+    // Send a fresh object each frame. AudioAnalyzer.getFeatures() returns the
+    // same internal `smoothedFeatures` reference every call; if we passed it
+    // through React state directly, setState would see the same reference and
+    // skip the update, so any useEffect listening on audioFeatures would
+    // never run. Cloning here keeps every consumer (including useAutoCycle)
+    // in sync with the live mic data.
+    onAudioFeaturesUpdate({ ...audioFeatures })
 
     // Update and render scene
     sceneManager.update(time, deltaTime, beatInfo, audioFeatures)

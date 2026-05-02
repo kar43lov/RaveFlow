@@ -5,6 +5,8 @@ import { Equalizer } from './components/Equalizer'
 import { FullscreenHint } from './components/FullscreenHint'
 import { TouchControls } from './components/TouchControls'
 import { useKeyboard } from './hooks/useKeyboard'
+import { useAutoCycle, useAutoCycleDebug } from './hooks/useAutoCycle'
+import { AutoCycleDebugOverlay } from './components/AutoCycleDebugOverlay'
 import { useStore } from './store/useStore'
 import { SceneManager } from './renderer/SceneManager'
 import { AudioAnalyzer } from './audio/AudioAnalyzer'
@@ -22,6 +24,10 @@ export function App() {
 
   // Initialize keyboard shortcuts
   useKeyboard({ sceneCount })
+
+  // Auto-cycle scenes when enabled (timed or by music)
+  useAutoCycle(audioFeatures)
+  const autoCycleDebug = useAutoCycleDebug(audioFeatures)
 
   const handleSceneManagerReady = useCallback((sceneManager: SceneManager) => {
     setSceneNames(sceneManager.getSceneNames())
@@ -84,6 +90,8 @@ export function App() {
       <FullscreenHint />
 
       <TouchControls />
+
+      <AutoCycleDebugOverlay debug={autoCycleDebug} />
 
       <SettingsOverlay
         sceneNames={sceneNames}

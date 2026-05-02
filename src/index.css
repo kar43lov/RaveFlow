@@ -74,6 +74,11 @@ html, body, #root {
   align-items: flex-start;
   padding: 40px 20px;
   overflow-y: auto;
+  transition: background 0.18s ease;
+}
+
+.settings-overlay.previewing {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .settings-panel {
@@ -84,6 +89,13 @@ html, body, #root {
   border-radius: 12px;
   padding: 24px;
   color: #fff;
+  transition: background 0.18s ease;
+}
+
+.settings-overlay.previewing .settings-panel {
+  background: rgba(20, 20, 30, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .settings-header {
@@ -155,6 +167,17 @@ html, body, #root {
 .scene-btn.active {
   background: rgba(100, 100, 255, 0.2);
   border-color: rgba(100, 100, 255, 0.5);
+}
+
+.scene-btn.selected {
+  background: rgba(80, 220, 120, 0.18);
+  border-color: rgba(80, 220, 120, 0.55);
+}
+
+.scene-btn.selected.active {
+  background: rgba(120, 220, 200, 0.25);
+  border-color: rgba(120, 220, 200, 0.7);
+  box-shadow: 0 0 0 1px rgba(120, 220, 200, 0.35) inset;
 }
 
 .scene-btn .scene-number {
