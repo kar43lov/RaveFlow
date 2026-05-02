@@ -71,3 +71,32 @@ Shaders are inline strings in scene files. Common uniforms:
 - `uPulse` - beat pulse intensity (0-1, decays after onset)
 - `uBass`, `uEnergy` - audio features (0-1)
 - `uColorHue` - color control (0-1 for HSL hue)
+
+## Deployment
+
+Прод: **https://raveflow.ru**, hostname `kolcova-psih-bot`, Ubuntu 22.04 на Cloud.ru.
+
+### Обновить прод (новый билд)
+
+```
+/pg.ship-rave
+```
+
+Глобальная slash-команда (`~/.claude/commands/pg.ship-rave.md`) делает всё: pre-flight (проект + SSH + git status), `npm run build`, чистит старые ассеты на сервере (`/var/www/rave-visualizer/{index.html,assets/*}`), `scp -r dist/*`, верифицирует через curl что прод отдаёт свежий хэш бандла.
+
+Флаги:
+- `--skip-build` — пропустить `npm run build`, использовать готовый `dist/`
+- `--no-clean` — не чистить старые файлы на сервере (с подтверждением)
+
+Для коммита/PR сначала `/pg.ship`, потом `/pg.ship-rave` для выкатки.
+
+### Сервер
+
+- SSH: `ssh kolcova-psih-bot` (алиас в `~/.ssh/config`, ключ `~/.ssh/raveflow_ed25519`, юзер `kar43lov`)
+- Сайт: `/var/www/rave-visualizer/` (owner `kar43lov`, без sudo)
+- nginx: `/etc/nginx/sites-available/rave-visualizer` — SPA + gzip + certbot SSL. **Не редактируется** деплоем (только `index.html` + `assets/`); если нужны правки nginx/certbot — отдельно, руками, с осознанием последствий.
+- nginx **не нужно перезапускать** после деплоя — статика отдаётся напрямую с диска.
+
+### Первичная настройка (из нуля)
+
+См. `DEPLOY.md` (на английском, для Windows/Linux руками) и `deploy.sh`/`deploy.ps1`. Эти инструкции рассчитаны на разворачивание чистого сервера: nginx, certbot, права. Для **обновления** уже работающего прода используется `/pg.ship-rave`, не они.
