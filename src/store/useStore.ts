@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { MicStatus } from '../scenes/types'
 
 export type Quality = 'low' | 'medium' | 'high'
+export type AutoCycleMode = 'auto' | 'timed'
 
 interface AppState {
   // Scene
@@ -11,6 +12,21 @@ interface AppState {
   prevScene: () => void
   sceneCount: number
   setSceneCount: (count: number) => void
+
+  // Multi-select playlist
+  multiSelectMode: boolean
+  setMultiSelectMode: (v: boolean) => void
+  selectedScenes: number[]
+  toggleSceneSelected: (idx: number) => void
+  setSelectedScenes: (indices: number[]) => void
+
+  // Auto-cycle
+  autoCycleEnabled: boolean
+  setAutoCycleEnabled: (v: boolean) => void
+  autoCycleMode: AutoCycleMode
+  setAutoCycleMode: (m: AutoCycleMode) => void
+  autoCycleInterval: number  // seconds
+  setAutoCycleInterval: (s: number) => void
 
   // Playback
   isPaused: boolean
@@ -64,18 +80,70 @@ interface AppState {
   setSceneParam: (sceneKey: string, paramKey: string, value: number | string) => void
 }
 
-export const useStore = create<AppState>((set, get) => ({
+// Pick the next index inside the active subset (or full list if no subset).
+function stepIndex(
+  current: number,
+  count: number,
+  multi: boolean,
+  selected: number[],
+  delta: 1 | -1
+): number {
+  if (multi && selected.length > 0) {
+    const sorted = [...selected].sort((a, b) => a - b)
+    const pos = sorted.indexOf(current)
+    if (pos === -1) return sorted[0]
+    const nextPos = (pos + delta + sorted.length) % sorted.length
+    return sorted[nextPos]
+  }
+  return (current + delta + count) % count
+}
+
+export const useStore = create<AppState>((set) => ({
   // Scene
   currentSceneIndex: 0,
   setCurrentSceneIndex: (index) => set({ currentSceneIndex: index }),
   nextScene: () => set((state) => ({
-    currentSceneIndex: (state.currentSceneIndex + 1) % state.sceneCount
+    currentSceneIndex: stepIndex(
+      state.currentSceneIndex,
+      state.sceneCount,
+      state.multiSelectMode,
+      state.selectedScenes,
+      1
+    )
   })),
   prevScene: () => set((state) => ({
-    currentSceneIndex: (state.currentSceneIndex - 1 + state.sceneCount) % state.sceneCount
+    currentSceneIndex: stepIndex(
+      state.currentSceneIndex,
+      state.sceneCount,
+      state.multiSelectMode,
+      state.selectedScenes,
+      -1
+    )
   })),
   sceneCount: 6,
   setSceneCount: (count) => set({ sceneCount: count }),
+
+  // Multi-select playlist
+  multiSelectMode: false,
+  setMultiSelectMode: (v) => set({ multiSelectMode: v }),
+  selectedScenes: [],
+  toggleSceneSelected: (idx) => set((state) => {
+    const has = state.selectedScenes.includes(idx)
+    return {
+      selectedScenes: has
+        ? state.selectedScenes.filter((i) => i !== idx)
+        : [...state.selectedScenes, idx]
+    }
+  }),
+  setSelectedScenes: (indices) => set({ selectedScenes: [...indices] }),
+
+  // Auto-cycle
+  autoCycleEnabled: false,
+  setAutoCycleEnabled: (v) => set({ autoCycleEnabled: v }),
+  autoCycleMode: 'auto',
+  setAutoCycleMode: (m) => set({ autoCycleMode: m }),
+  autoCycleInterval: 60,
+  setAutoCycleInterval: (s) => set({ autoCycleInterval: Math.max(30, Math.min(600, s)) }),
 
   // Playback
   isPaused: false,
@@ -88,7 +156,19 @@ export const useStore = create<AppState>((set, get) => ({
   // UI
   showSettings: false,
   toggleSettings: () => set((state) => ({ showSettings: !state.showSettings })),
-  closeSettings: () => set({ showSettings: false }),
+  closeSettings: () => set((state) => {
+    // If multi-select is on and current scene was deselected, jump to the
+    // smallest selected index when closing settings.
+    if (
+      state.multiSelectMode &&
+      state.selectedScenes.length > 0 &&
+      !state.selectedScenes.includes(state.currentSceneIndex)
+    ) {
+      const first = [...state.selectedScenes].sort((a, b) => a - b)[0]
+      return { showSettings: false, currentSceneIndex: first }
+    }
+    return { showSettings: false }
+  }),
   showEqualizer: true,
   toggleEqualizer: () => set((state) => ({ showEqualizer: !state.showEqualizer })),
   showHint: true,

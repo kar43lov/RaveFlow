@@ -1,6 +1,13 @@
-import { useStore, Quality } from '../store/useStore'
+import { useStore, Quality, AutoCycleMode } from '../store/useStore'
 import { MicStatus } from '../scenes/types'
 import { TapTempo } from '../audio/BeatClock'
+
+function formatInterval(s: number): string {
+  if (s < 60) return `${s}s`
+  const m = Math.floor(s / 60)
+  const r = s % 60
+  return r === 0 ? `${m}m` : `${m}m ${r}s`
+}
 
 interface SettingsOverlayProps {
   sceneNames: string[]
@@ -20,6 +27,17 @@ export function SettingsOverlay({
     closeSettings,
     currentSceneIndex,
     setCurrentSceneIndex,
+    multiSelectMode,
+    setMultiSelectMode,
+    selectedScenes,
+    toggleSceneSelected,
+    setSelectedScenes,
+    autoCycleEnabled,
+    setAutoCycleEnabled,
+    autoCycleMode,
+    setAutoCycleMode,
+    autoCycleInterval,
+    setAutoCycleInterval,
     micMode,
     setMicMode,
     micStatus,
@@ -83,18 +101,129 @@ export function SettingsOverlay({
         {/* Scene Selection */}
         <div className="settings-section">
           <h3>Scene</h3>
-          <div className="scene-grid">
-            {sceneNames.map((name, index) => (
-              <button
-                key={index}
-                className={`scene-btn ${currentSceneIndex === index ? 'active' : ''}`}
-                onClick={() => setCurrentSceneIndex(index)}
-              >
-                <span className="scene-number">{index + 1}</span>
-                {name}
-              </button>
-            ))}
+
+          <div className="control-row">
+            <label>Multi-select playlist</label>
+            <div
+              className={`toggle ${multiSelectMode ? 'active' : ''}`}
+              onClick={() => setMultiSelectMode(!multiSelectMode)}
+            />
           </div>
+
+          {multiSelectMode && (
+            <div className="btn-group" style={{ marginBottom: '12px' }}>
+              <button
+                className="btn"
+                onClick={() => setSelectedScenes(sceneNames.map((_, i) => i))}
+              >
+                Select all
+              </button>
+              <button className="btn" onClick={() => setSelectedScenes([])}>
+                Clear
+              </button>
+              <span className="control-value" style={{ marginLeft: 'auto' }}>
+                {selectedScenes.length} / {sceneNames.length}
+              </span>
+            </div>
+          )}
+
+          <div className="scene-grid">
+            {sceneNames.map((name, index) => {
+              const isCurrent = currentSceneIndex === index
+              const isSelected = multiSelectMode && selectedScenes.includes(index)
+              const cls = [
+                'scene-btn',
+                isCurrent ? 'active' : '',
+                isSelected ? 'selected' : ''
+              ].filter(Boolean).join(' ')
+              return (
+                <button
+                  key={index}
+                  className={cls}
+                  onClick={() => {
+                    if (multiSelectMode) {
+                      toggleSceneSelected(index)
+                    } else {
+                      setCurrentSceneIndex(index)
+                    }
+                  }}
+                >
+                  <span className="scene-number">{index + 1}</span>
+                  {name}
+                </button>
+              )
+            })}
+          </div>
+
+          {multiSelectMode && (
+            <p style={{
+              fontSize: '11px',
+              color: 'rgba(255,255,255,0.4)',
+              marginTop: '8px',
+              lineHeight: 1.4
+            }}>
+              Tap scenes to add or remove from the rotation. Next/Prev will only
+              cycle through the selected ones.
+            </p>
+          )}
+        </div>
+
+        {/* Auto-cycle */}
+        <div className="settings-section">
+          <h3>Auto-cycle</h3>
+
+          <div className="control-row">
+            <label>Auto-cycle scenes</label>
+            <div
+              className={`toggle ${autoCycleEnabled ? 'active' : ''}`}
+              onClick={() => setAutoCycleEnabled(!autoCycleEnabled)}
+            />
+          </div>
+
+          {autoCycleEnabled && (
+            <>
+              <div className="control-row">
+                <label>Mode</label>
+                <div className="quality-selector">
+                  {(['auto', 'timed'] as AutoCycleMode[]).map((m) => (
+                    <button
+                      key={m}
+                      className={`quality-btn ${autoCycleMode === m ? 'active' : ''}`}
+                      onClick={() => setAutoCycleMode(m)}
+                    >
+                      {m === 'auto' ? 'By music' : 'Timed'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {autoCycleMode === 'timed' && (
+                <div className="control-row">
+                  <label>Every</label>
+                  <input
+                    type="range"
+                    min="30"
+                    max="600"
+                    step="30"
+                    value={autoCycleInterval}
+                    onChange={(e) => setAutoCycleInterval(parseInt(e.target.value))}
+                  />
+                  <span className="control-value">{formatInterval(autoCycleInterval)}</span>
+                </div>
+              )}
+
+              <p style={{
+                fontSize: '11px',
+                color: 'rgba(255,255,255,0.4)',
+                marginTop: '4px',
+                lineHeight: 1.4
+              }}>
+                {autoCycleMode === 'auto'
+                  ? 'Switches on big drops or transitions in the music (mic mode required for best results).'
+                  : `Switches every ${formatInterval(autoCycleInterval)}. Manual Next/Prev resets the timer.`}
+              </p>
+            </>
+          )}
         </div>
 
         {/* Audio Mode */}

@@ -157,6 +157,17 @@ html, body, #root {
   border-color: rgba(100, 100, 255, 0.5);
 }
 
+.scene-btn.selected {
+  background: rgba(80, 220, 120, 0.18);
+  border-color: rgba(80, 220, 120, 0.55);
+}
+
+.scene-btn.selected.active {
+  background: rgba(120, 220, 200, 0.25);
+  border-color: rgba(120, 220, 200, 0.7);
+  box-shadow: 0 0 0 1px rgba(120, 220, 200, 0.35) inset;
+}
+
 .scene-btn .scene-number {
   display: block;
   font-size: 10px;
