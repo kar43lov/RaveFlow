@@ -26,12 +26,14 @@ export function SettingsOverlay({
     showSettings,
     closeSettings,
     currentSceneIndex,
+    previewSceneIndex,
     setCurrentSceneIndex,
     multiSelectMode,
     setMultiSelectMode,
     selectedScenes,
     toggleSceneSelected,
     setSelectedScenes,
+    setPreviewSceneIndex,
     autoCycleEnabled,
     setAutoCycleEnabled,
     autoCycleMode,
@@ -94,10 +96,15 @@ export function SettingsOverlay({
     }
   }
 
+  const isPreviewing = previewSceneIndex !== null
+
   return (
-    <div className="settings-overlay" onClick={(e) => {
-      if (e.target === e.currentTarget) closeSettings()
-    }}>
+    <div
+      className={`settings-overlay ${isPreviewing ? 'previewing' : ''}`}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) closeSettings()
+      }}
+    >
       <div className="settings-panel">
         <div className="settings-header">
           <h2>Settings</h2>
@@ -133,7 +140,10 @@ export function SettingsOverlay({
             </div>
           )}
 
-          <div className="scene-grid">
+          <div
+            className="scene-grid"
+            onMouseLeave={() => setPreviewSceneIndex(null)}
+          >
             {sceneNames.map((name, index) => {
               const isCurrent = currentSceneIndex === index
               const isSelected = multiSelectMode && selectedScenes.includes(index)
@@ -146,11 +156,14 @@ export function SettingsOverlay({
                 <button
                   key={index}
                   className={cls}
+                  onMouseEnter={() => setPreviewSceneIndex(index)}
+                  onFocus={() => setPreviewSceneIndex(index)}
                   onClick={() => {
                     if (multiSelectMode) {
                       toggleSceneSelected(index)
                     } else {
                       setCurrentSceneIndex(index)
+                      setPreviewSceneIndex(null)
                     }
                   }}
                 >

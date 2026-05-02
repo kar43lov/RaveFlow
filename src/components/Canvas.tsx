@@ -31,6 +31,7 @@ export function Canvas({
   const {
     isPaused,
     currentSceneIndex,
+    previewSceneIndex,
     setCurrentSceneIndex,
     setSceneCount,
     micMode,
@@ -118,12 +119,12 @@ export function Canvas({
     }
   }, [sensitivity, smoothing])
 
-  // Update current scene
+  // Update current scene; preview takes priority for hover-in-settings
   useEffect(() => {
-    if (sceneManagerRef.current) {
-      sceneManagerRef.current.setCurrentSceneIndex(currentSceneIndex)
-    }
-  }, [currentSceneIndex])
+    if (!sceneManagerRef.current) return
+    const idx = previewSceneIndex !== null ? previewSceneIndex : currentSceneIndex
+    sceneManagerRef.current.setCurrentSceneIndex(idx)
+  }, [currentSceneIndex, previewSceneIndex])
 
   // Animation loop
   const animate = useCallback((time: number) => {

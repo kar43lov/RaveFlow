@@ -74,6 +74,11 @@ html, body, #root {
   align-items: flex-start;
   padding: 40px 20px;
   overflow-y: auto;
+  transition: background 0.18s ease;
+}
+
+.settings-overlay.previewing {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .settings-panel {
@@ -84,6 +89,13 @@ html, body, #root {
   border-radius: 12px;
   padding: 24px;
   color: #fff;
+  transition: background 0.18s ease;
+}
+
+.settings-overlay.previewing .settings-panel {
+  background: rgba(20, 20, 30, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .settings-header {

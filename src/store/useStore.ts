@@ -12,6 +12,8 @@ interface AppState {
   prevScene: () => void
   sceneCount: number
   setSceneCount: (count: number) => void
+  previewSceneIndex: number | null  // hover-preview in settings; overrides current when set
+  setPreviewSceneIndex: (index: number | null) => void
 
   // Multi-select playlist
   multiSelectMode: boolean
@@ -128,6 +130,8 @@ export const useStore = create<AppState>((set) => ({
   })),
   sceneCount: 6,
   setSceneCount: (count) => set({ sceneCount: count }),
+  previewSceneIndex: null,
+  setPreviewSceneIndex: (index) => set({ previewSceneIndex: index }),
 
   // Multi-select playlist
   multiSelectMode: false,
@@ -169,6 +173,7 @@ export const useStore = create<AppState>((set) => ({
   showSettings: false,
   toggleSettings: () => set((state) => ({ showSettings: !state.showSettings })),
   closeSettings: () => set((state) => {
+    // Always clear hover preview when settings close.
     // If multi-select is on and current scene was deselected, jump to the
     // smallest selected index when closing settings.
     if (
@@ -177,9 +182,9 @@ export const useStore = create<AppState>((set) => ({
       !state.selectedScenes.includes(state.currentSceneIndex)
     ) {
       const first = [...state.selectedScenes].sort((a, b) => a - b)[0]
-      return { showSettings: false, currentSceneIndex: first }
+      return { showSettings: false, currentSceneIndex: first, previewSceneIndex: null }
     }
-    return { showSettings: false }
+    return { showSettings: false, previewSceneIndex: null }
   }),
   showEqualizer: true,
   toggleEqualizer: () => set((state) => ({ showEqualizer: !state.showEqualizer })),
