@@ -183,8 +183,13 @@ export function Canvas({
     audioFeatures.mid *= masterIntensity
     audioFeatures.high *= masterIntensity
 
-    // Update audio features for equalizer
-    onAudioFeaturesUpdate(audioFeatures)
+    // Send a fresh object each frame. AudioAnalyzer.getFeatures() returns the
+    // same internal `smoothedFeatures` reference every call; if we passed it
+    // through React state directly, setState would see the same reference and
+    // skip the update, so any useEffect listening on audioFeatures would
+    // never run. Cloning here keeps every consumer (including useAutoCycle)
+    // in sync with the live mic data.
+    onAudioFeaturesUpdate({ ...audioFeatures })
 
     // Update and render scene
     sceneManager.update(time, deltaTime, beatInfo, audioFeatures)
