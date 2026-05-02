@@ -19,6 +19,13 @@ import { ParticleExplosion } from '../scenes/ParticleExplosion'
 import { GeometricMorph } from '../scenes/GeometricMorph'
 import { Kaleidoscope } from '../scenes/Kaleidoscope'
 import { CityFlythrough } from '../scenes/CityFlythrough'
+// Pack 2
+import { PlasmaStorm } from '../scenes/PlasmaStorm'
+import { BlackHole } from '../scenes/BlackHole'
+import { SpectrumBars3D } from '../scenes/SpectrumBars3D'
+import { CRTGlitch } from '../scenes/CRTGlitch'
+import { HyperspaceWarp } from '../scenes/HyperspaceWarp'
+import { BeatShockwaves } from '../scenes/BeatShockwaves'
 
 export class SceneManager {
   private renderer: Renderer
@@ -54,7 +61,14 @@ export class SceneManager {
       new ParticleExplosion(),
       new GeometricMorph(),
       new Kaleidoscope(),
-      new CityFlythrough()
+      new CityFlythrough(),
+      // Pack 2
+      new PlasmaStorm(),
+      new BlackHole(),
+      new SpectrumBars3D(),
+      new CRTGlitch(),
+      new HyperspaceWarp(),
+      new BeatShockwaves()
     ]
 
     // Initialize all scenes
