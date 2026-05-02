@@ -109,8 +109,11 @@ export function AutoCycleDebugOverlay({ debug }: Props) {
         highlight={debug.isDropNow}
       />
 
-      <div style={{ fontSize: 10, opacity: 0.6, marginTop: 8, marginBottom: 4 }}>
+      <div style={{ fontSize: 10, opacity: 0.6, marginTop: 8, marginBottom: 2 }}>
         avg {fmt(debug.energyAvg)} · peak {fmt(debug.energyPeak)} · silence&lt;{fmt(debug.silenceMax)}
+      </div>
+      <div style={{ fontSize: 10, opacity: 0.6, marginBottom: 4 }}>
+        prev (~0.5s) {fmt(debug.energyPrev)} · jump ×{debug.dropJumpRatio.toFixed(2)} required
       </div>
 
       <div style={{

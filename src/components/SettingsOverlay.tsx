@@ -40,6 +40,8 @@ export function SettingsOverlay({
     setAutoCycleInterval,
     autoCycleSensitivity,
     setAutoCycleSensitivity,
+    autoCycleCooldown,
+    setAutoCycleCooldown,
     showAutoCycleDebug,
     toggleAutoCycleDebug,
     micMode,
@@ -229,6 +231,18 @@ export function SettingsOverlay({
                       onChange={(e) => setAutoCycleSensitivity(parseFloat(e.target.value))}
                     />
                     <span className="control-value">{autoCycleSensitivity.toFixed(2)}</span>
+                  </div>
+                  <div className="control-row">
+                    <label>Min gap</label>
+                    <input
+                      type="range"
+                      min="5"
+                      max="60"
+                      step="1"
+                      value={autoCycleCooldown}
+                      onChange={(e) => setAutoCycleCooldown(parseInt(e.target.value))}
+                    />
+                    <span className="control-value">{autoCycleCooldown}s</span>
                   </div>
                   <div className="control-row">
                     <label>Debug overlay</label>

@@ -29,6 +29,8 @@ interface AppState {
   setAutoCycleInterval: (s: number) => void
   autoCycleSensitivity: number  // 0..1, higher = triggers more often
   setAutoCycleSensitivity: (v: number) => void
+  autoCycleCooldown: number     // seconds, minimum gap between music-triggered switches
+  setAutoCycleCooldown: (s: number) => void
   showAutoCycleDebug: boolean
   toggleAutoCycleDebug: () => void
 
@@ -148,8 +150,10 @@ export const useStore = create<AppState>((set) => ({
   setAutoCycleMode: (m) => set({ autoCycleMode: m }),
   autoCycleInterval: 60,
   setAutoCycleInterval: (s) => set({ autoCycleInterval: Math.max(30, Math.min(600, s)) }),
-  autoCycleSensitivity: 0.65,
+  autoCycleSensitivity: 0.5,
   setAutoCycleSensitivity: (v) => set({ autoCycleSensitivity: Math.max(0, Math.min(1, v)) }),
+  autoCycleCooldown: 10,
+  setAutoCycleCooldown: (s) => set({ autoCycleCooldown: Math.max(5, Math.min(60, s)) }),
   showAutoCycleDebug: false,
   toggleAutoCycleDebug: () => set((state) => ({ showAutoCycleDebug: !state.showAutoCycleDebug })),
 
