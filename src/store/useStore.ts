@@ -29,6 +29,8 @@ interface AppState {
   setAutoCycleInterval: (s: number) => void
   autoCycleSensitivity: number  // 0..1, higher = triggers more often
   setAutoCycleSensitivity: (v: number) => void
+  showAutoCycleDebug: boolean
+  toggleAutoCycleDebug: () => void
 
   // Playback
   isPaused: boolean
@@ -148,6 +150,8 @@ export const useStore = create<AppState>((set) => ({
   setAutoCycleInterval: (s) => set({ autoCycleInterval: Math.max(30, Math.min(600, s)) }),
   autoCycleSensitivity: 0.65,
   setAutoCycleSensitivity: (v) => set({ autoCycleSensitivity: Math.max(0, Math.min(1, v)) }),
+  showAutoCycleDebug: false,
+  toggleAutoCycleDebug: () => set((state) => ({ showAutoCycleDebug: !state.showAutoCycleDebug })),
 
   // Playback
   isPaused: false,

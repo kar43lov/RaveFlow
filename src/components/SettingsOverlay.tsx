@@ -40,6 +40,8 @@ export function SettingsOverlay({
     setAutoCycleInterval,
     autoCycleSensitivity,
     setAutoCycleSensitivity,
+    showAutoCycleDebug,
+    toggleAutoCycleDebug,
     micMode,
     setMicMode,
     micStatus,
@@ -215,18 +217,27 @@ export function SettingsOverlay({
               )}
 
               {(autoCycleMode === 'auto' || autoCycleMode === 'hybrid') && (
-                <div className="control-row">
-                  <label>Sensitivity</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={autoCycleSensitivity}
-                    onChange={(e) => setAutoCycleSensitivity(parseFloat(e.target.value))}
-                  />
-                  <span className="control-value">{autoCycleSensitivity.toFixed(2)}</span>
-                </div>
+                <>
+                  <div className="control-row">
+                    <label>Sensitivity</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={autoCycleSensitivity}
+                      onChange={(e) => setAutoCycleSensitivity(parseFloat(e.target.value))}
+                    />
+                    <span className="control-value">{autoCycleSensitivity.toFixed(2)}</span>
+                  </div>
+                  <div className="control-row">
+                    <label>Debug overlay</label>
+                    <div
+                      className={`toggle ${showAutoCycleDebug ? 'active' : ''}`}
+                      onClick={toggleAutoCycleDebug}
+                    />
+                  </div>
+                </>
               )}
 
               <p style={{
